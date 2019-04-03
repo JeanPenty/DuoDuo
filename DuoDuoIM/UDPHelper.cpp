@@ -2,28 +2,29 @@
 #include "UDPHelper.h"
 
 template<>
-CUDPHelper * SSingleton<CUDPHelper>::ms_Singleton = NULL;
+CUDPSender* SSingleton<CUDPSender>::ms_Singleton = NULL;
+CUDPRecver* SSingleton<CUDPRecver>::ms_Singleton = NULL;
 
 /////////////////////////////////////////////////////////////////////////////////
 
-CUDPHelperThread::CUDPHelperThread(SComMgr &comMgr, std::string strName)
+CUDPSendThread::CUDPSendThread(SComMgr &comMgr, std::string strName)
 {
 	comMgr.CreateTaskLoop((IObjRef**)&m_pTaskLoop);
 	SASSERT(m_pTaskLoop);
 	m_pTaskLoop->start(strName.c_str(), ITaskLoop::Low);
 }
 
-CUDPHelperThread::~CUDPHelperThread()
+CUDPSendThread::~CUDPSendThread()
 {
 	m_pTaskLoop->stop();
 }
 
-void CUDPHelperThread::_SendBroadcast(const std::string& strBroadcastData)
+void CUDPSendThread::_SendBroadcast(const std::string& strBroadcastData)
 {
 	SOCKET sock = socket(AF_INET, SOCK_DGRAM, 0);
 	SOCKADDR_IN addr;
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(PORT_BORDCAST);
+	addr.sin_port = htons(PORT_DUODUO);
 	addr.sin_addr.S_un.S_addr = inet_addr("255.255.255.255"); //广播地址
 
 	//设置该套接字为广播类型，
@@ -36,24 +37,104 @@ void CUDPHelperThread::_SendBroadcast(const std::string& strBroadcastData)
 
 	closesocket(sock);
 }
-////////////////////////////////////////////////////////////////////////////////
+////////////////////////////
 
-CUDPHelper::CUDPHelper(void)
+CUDPSender::CUDPSender(void)
 {
-	m_pThread = new CUDPHelperThread(m_comMgr, "udp_thread");
+	m_pThread = new CUDPSendThread(m_comMgr, "udp_sender");
 }
 
-CUDPHelper::~CUDPHelper(void)
+CUDPSender::~CUDPSender(void)
 {
 	delete m_pThread;
 }
 
-bool CUDPHelper::cancelTask(long taskID)
+bool CUDPSender::cancelTask(long taskID)
 {
 	return m_pThread->cancelTask(taskID);
 }
 
-void CUDPHelper::SendBroadcast(const std::string& strBroadcastData, int nPriority /* = 1 */)
+void CUDPSender::SendBroadcast(const std::string& strBroadcastData, int nPriority /* = 1 */)
 {
 	m_pThread->SendBroadcast(strBroadcastData, nPriority);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+CUDPRecvThread::CUDPRecvThread(SComMgr &comMgr, std::string strName)
+{
+	comMgr.CreateTaskLoop((IObjRef**)&m_pTaskLoop);
+	SASSERT(m_pTaskLoop);
+	m_pTaskLoop->start(strName.c_str(), ITaskLoop::Low);
+
+	m_bRun = true;
+}
+
+CUDPRecvThread::~CUDPRecvThread()
+{
+	m_pTaskLoop->stop();
+}
+
+void CUDPRecvThread::_StartUDPRecv()
+{
+	SOCKET sock = socket(AF_INET, SOCK_DGRAM, 0);
+
+	SOCKADDR_IN addr;
+	addr.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+	addr.sin_family = AF_INET;
+	addr.sin_port=htons(PORT_DUODUO);
+
+	int nRet = bind(sock, (SOCKADDR*)&addr, sizeof(SOCKADDR));
+	if(nRet == -1)
+	{
+		printf("Bind sock failed!\n");
+		return;
+	}
+
+	fd_set fd;
+	FD_ZERO(&fd);
+	FD_SET(sock, &fd);
+
+	char szDataBuffer[2048];
+	int nRecvSize;
+
+	while (m_bRun)
+	{
+		fd_set fdOld = fd;
+		int nResult = select(sock + 1, &fdOld, NULL, NULL, NULL);
+		for (int i = 0; i < fd.fd_count; i++)
+		{
+			if (fd.fd_array[i] == sock)
+			{
+				memset(szDataBuffer, 0, 2048);
+				nRecvSize = recv(fd.fd_array[i], szDataBuffer, 2048, 0);
+				if (nRecvSize > 0)
+				{
+					std::string strBody = szDataBuffer;
+					int nTemp = 0;
+				}
+			}
+		}
+	}
+}
+
+///////////////////////////
+
+CUDPRecver::CUDPRecver(void)
+{
+	m_pThread = new CUDPRecvThread(m_comMgr, "udp_recver");
+}
+
+CUDPRecver::~CUDPRecver(void)
+{
+	delete m_pThread;
+}
+
+bool CUDPRecver::cancelTask(long taskID)
+{
+	return m_pThread->cancelTask(taskID);
+}
+
+void CUDPRecver::StartUDPRecv(int nPriority /* = 1 */)
+{
+	m_pThread->StartUDPRecv(nPriority);
 }

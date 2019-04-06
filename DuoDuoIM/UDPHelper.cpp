@@ -87,6 +87,12 @@ void CUDPRecvThread::_StartUDPRecv()
 	if(nRet == -1)
 	{
 		printf("Bind sock failed!\n");
+
+		//通知UI线程绑定端口失败，程序quit
+		EventBindPortFailed* pEvt = new EventBindPortFailed(NULL);
+		SNotifyCenter::getSingletonPtr()->FireEventAsync(pEvt);
+		pEvt->Release();
+
 		return;
 	}
 
@@ -110,13 +116,79 @@ void CUDPRecvThread::_StartUDPRecv()
 				if (nRecvSize > 0)
 				{
 					std::string strBody = szDataBuffer;
-					int nTemp = 0;
+					rapidjson::Document document(&m_parseAllocator);
+					if (document.Parse<0>(strBody.c_str()).HasParseError())
+					{
+						printf("解析json串失败！ json串：%s\n", strBody);
+						//释放解析器
+						m_parseAllocator.Clear();
+						((rapidjson::MemoryPoolAllocator<>::ChunkHeader*)m_parseBuffer)->size = 0;
+					}
+					else
+					{
+						if (document.IsObject())	//解析object
+							processSvrData(document);
+					}
 				}
 			}
 		}
 	}
 }
 
+void CUDPRecvThread::processSvrData(const rapidjson::Value& data)
+{
+	assert(data.HasMember("cmd"));
+	std::string strCmd = data["cmd"].GetString();
+	if ("find_device" == strCmd)//网段内其他设备发送的查找设备的广播消息
+		ProcessFindDevice(data);
+	else if ("broadcast_response" == strCmd)//广播响应
+		ProcessBroadcastResponse(data);
+	else if ("send_text" == strCmd)//接收到其他设备发送的文本消息
+		ProcessSendText(data);
+	else if ("send_image" == strCmd)//接收到其他设备发送的图片消息
+		ProcessSendImage(data);
+	else if ("send_file" == strCmd)//接收到其他设备发送的文件消息
+		ProcessSendFile(data);
+	else if ("send_audio" == strCmd)//接收到其他设备发送的短语音消息
+		ProcessSendAudio(data);
+	else if ("send_video" == strCmd)//接收到其他设备发送的短视频消息
+		ProcessSendVideo(data);
+}
+
+void CUDPRecvThread::ProcessFindDevice(const rapidjson::Value& data)
+{
+	//
+}
+
+void CUDPRecvThread::ProcessBroadcastResponse(const rapidjson::Value& data)
+{
+	//
+}
+
+void CUDPRecvThread::ProcessSendText(const rapidjson::Value& data)
+{
+	//
+}
+
+void CUDPRecvThread::ProcessSendImage(const rapidjson::Value& data)
+{
+	//
+}
+
+void CUDPRecvThread::ProcessSendFile(const rapidjson::Value& data)
+{
+	//
+}
+
+void CUDPRecvThread::ProcessSendAudio(const rapidjson::Value& data)
+{
+	//
+}
+
+void CUDPRecvThread::ProcessSendVideo(const rapidjson::Value& data)
+{
+	//
+}
 ///////////////////////////
 
 CUDPRecver::CUDPRecver(void)

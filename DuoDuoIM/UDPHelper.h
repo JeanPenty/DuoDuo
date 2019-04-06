@@ -7,6 +7,8 @@
 
 #include "DataCenter.h"
 
+typedef rapidjson::GenericStringBuffer<rapidjson::UTF8<>, rapidjson::MemoryPoolAllocator<> > MPAStringBuffer;
+
 class CUDPSendThread
 {
 public:
@@ -70,11 +72,30 @@ public:
 
 protected:
 	void _StartUDPRecv();
-
+	
+private:
+	void processSvrData(const rapidjson::Value& data);
+	void ProcessFindDevice(const rapidjson::Value& data);
+	void ProcessBroadcastResponse(const rapidjson::Value& data);
+	void ProcessSendText(const rapidjson::Value& data);
+	void ProcessSendImage(const rapidjson::Value& data);
+	void ProcessSendFile(const rapidjson::Value& data);
+	void ProcessSendAudio(const rapidjson::Value& data);
+	void ProcessSendVideo(const rapidjson::Value& data);
 private:
 	CAutoRefPtr<ITaskLoop> m_pTaskLoop;
 
 	bool	m_bRun;
+
+	//json解析
+#define PARSEBUFFER_SIZE 8192 //8k
+	char m_parseBuffer[PARSEBUFFER_SIZE];
+	rapidjson::MemoryPoolAllocator<> m_parseAllocator;
+
+	//json打包
+#define BUILDBUFFER_SIZE 8192 //8k
+	char m_buildBuffer[BUILDBUFFER_SIZE];
+	rapidjson::MemoryPoolAllocator<> m_buildAllocator;
 };
 
 class CUDPRecver : public SSingleton<CUDPRecver>
@@ -90,4 +111,14 @@ public:
 private:
 	CUDPRecvThread*		m_pThread;
 	SComMgr				m_comMgr;
+
+	//json解析
+#define PARSEBUFFER_SIZE 8192 //8k
+	char m_parseBuffer[PARSEBUFFER_SIZE];
+	rapidjson::MemoryPoolAllocator<> m_parseAllocator;
+
+	//json打包
+#define BUILDBUFFER_SIZE 8192 //8k
+	char m_buildBuffer[BUILDBUFFER_SIZE];
+	rapidjson::MemoryPoolAllocator<> m_buildAllocator;
 };

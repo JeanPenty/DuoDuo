@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SOUIPATH)\config&quot;;&quot;$(SOUIPATH)\components&quot;;&quot;$(SOUIPATH)\SOUI\include&quot;;&quot;$(SOUIPATH)\utilities\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SOUIPATH)\config&quot;;&quot;$(SOUIPATH)\components&quot;;&quot;$(SOUIPATH)\SOUI\include&quot;;&quot;$(SOUIPATH)\utilities\include&quot;;.\"
 				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;_DEBUG"
 				RuntimeLibrary="3"
 				TreatWChar_tAsBuiltInType="true"
@@ -118,7 +118,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(SOUIPATH)\config&quot;;&quot;$(SOUIPATH)\components&quot;;&quot;$(SOUIPATH)\SOUI\include&quot;;&quot;$(SOUIPATH)\utilities\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SOUIPATH)\config&quot;;&quot;$(SOUIPATH)\components&quot;;&quot;$(SOUIPATH)\SOUI\include&quot;;&quot;$(SOUIPATH)\utilities\include&quot;;.\;$(NOINHERIT)"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="true"
@@ -231,6 +231,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\EventsDefine.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MainDlg.h"
 				>
 			</File>
@@ -328,6 +332,54 @@
 					/>
 				</FileConfiguration>
 			</File>
+		</Filter>
+		<Filter
+			Name="rapidjson"
+			>
+			<File
+				RelativePath=".\rapidjson\document.h"
+				>
+			</File>
+			<File
+				RelativePath=".\rapidjson\filestream.h"
+				>
+			</File>
+			<File
+				RelativePath=".\rapidjson\prettywriter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\rapidjson\rapidjson.h"
+				>
+			</File>
+			<File
+				RelativePath=".\rapidjson\reader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\rapidjson\stringbuffer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\rapidjson\writer.h"
+				>
+			</File>
+			<Filter
+				Name="internal"
+				>
+				<File
+					RelativePath=".\rapidjson\internal\pow10.h"
+					>
+				</File>
+				<File
+					RelativePath=".\rapidjson\internal\stack.h"
+					>
+				</File>
+				<File
+					RelativePath=".\rapidjson\internal\strfunc.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\license.txt"

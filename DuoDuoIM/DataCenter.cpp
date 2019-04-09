@@ -8,20 +8,24 @@ CDataCenter::CDataCenter(void)
 {
 	//处理local_ip
 	char szHostName[128];
-	gethostname(szHostName,128);
-	HOSTENT* phe = gethostbyname(szHostName);
-	int i = 0;
-	while(phe->h_addr_list[i]) i++;
-	m_pdwLocalIP = new DWORD[i+1];
-	i=0;
-	while(phe->h_addr_list[i]){
-		memcpy(m_pdwLocalIP + i, phe->h_addr_list[i], 4);
-		i++;
+	gethostname(szHostName,128);					
+	HOSTENT* p = gethostbyname(szHostName);
+
+	std::string strName = p->h_name;
+
+	for (int i = 0; p->h_addr_list[i] != 0; i++)
+	{
+		struct in_addr in;
+		memcpy(&in, p->h_addr_list[i], sizeof(struct in_addr));
+		std::string strHost = inet_ntoa(in);
+		int j = 0;
 	}
-	m_pdwLocalIP[i] = 0;
+
+	m_LocalInfo.m_strName = strName;
+	m_LocalInfo.m_nPort = PORT_DUODUO;
+	m_LocalInfo.m_strClientID = GenerateUUID();
 
 	//处理本机信息(用于广播时向网内其他设备发送)
-
 
 	SNotifyCenter::getSingleton().addEvent(EVENTID(EventBindPortFailed));
 	SNotifyCenter::getSingleton().addEvent(EVENTID(EventFindDevice));
@@ -44,6 +48,8 @@ void CDataCenter::OnBindBroadcastPortFailed(EventArgs* e)
 	{
 		//提示绑定端口号失败！
 		//退出进程
+		pEvt->bubbleUp = true;
+		ReFireEventSync(pEvt);
 	}
 }
 
@@ -52,7 +58,11 @@ void CDataCenter::OnFindDevice(EventArgs* e)
 	EventFindDevice* pEvt = sobj_cast<EventFindDevice>(e);
 	if (pEvt)
 	{
-		//
+		m_mapClients.insert(std::make_pair(pEvt->m_strClientID, 
+			CLIENT_INFO(pEvt->m_strName, pEvt->m_strIP, pEvt->m_strClientID, pEvt->m_nPort)));
+
+		pEvt->bubbleUp = true;
+		//ReFireEventSync(pEvt);
 	}
 }
 
@@ -104,4 +114,23 @@ void CDataCenter::OnSendVideo(EventArgs* e)
 	if (pEvt)
 	{
 	}
+}
+
+std::string CDataCenter::GenerateUUID()
+{
+	char szbuf[100];
+	GUID guid;
+	::CoCreateGuid(&guid);
+	sprintf(szbuf,
+		"%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+		guid.Data1,
+		guid.Data2,
+		guid.Data3,
+		guid.Data4[0], guid.Data4[1],
+		guid.Data4[2], guid.Data4[3],
+		guid.Data4[4], guid.Data4[5],
+		guid.Data4[6], guid.Data4[7]);
+
+	std::string strUUID = szbuf;
+	return strUUID;
 }

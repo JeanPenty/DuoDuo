@@ -21,19 +21,24 @@ CUDPSendThread::~CUDPSendThread()
 
 void CUDPSendThread::_SendBroadcast(const std::string& strBroadcastData)
 {
-	SOCKET sock = socket(AF_INET, SOCK_DGRAM, 0);
+	SOCKET sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	SOCKADDR_IN addr;
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(PORT_DUODUO);
-	addr.sin_addr.S_un.S_addr = inet_addr("255.255.255.255"); //广播地址
+	//addr.sin_addr.S_un.S_addr = htonl(INADDR_BROADCAST);
+	addr.sin_addr.S_un.S_addr = inet_addr("255.255.255.255");
 
 	//设置该套接字为广播类型，
 	DWORD optval = 1;
 	setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (char*)&optval, sizeof(DWORD)); //设置套接字选项
 
-	DWORD dwDataLen = strBroadcastData.length();
+	GENPACKET packet = {0};
+	packet.m_header.m_nProtocolVersion = 1;
+	packet.m_header.m_nHeadLen = 12;
+	packet.m_header.m_nBodyLen = strBroadcastData.length();
+	strcpy(packet.m_szData, strBroadcastData.c_str());
 
-	sendto(sock, strBroadcastData.c_str(), dwDataLen + 8, 0, (SOCKADDR*)&addr,sizeof(SOCKADDR));
+	sendto(sock, (char*)&packet, sizeof(packet), 0, (SOCKADDR*)&addr,sizeof(SOCKADDR));
 
 	closesocket(sock);
 }
@@ -67,6 +72,8 @@ CUDPRecvThread::CUDPRecvThread(SComMgr &comMgr, std::string strName)
 	m_pTaskLoop->start(strName.c_str(), ITaskLoop::Low);
 
 	m_bRun = true;
+
+	InitServer();
 }
 
 CUDPRecvThread::~CUDPRecvThread()
@@ -76,14 +83,40 @@ CUDPRecvThread::~CUDPRecvThread()
 
 void CUDPRecvThread::_StartUDPRecv()
 {
-	SOCKET sock = socket(AF_INET, SOCK_DGRAM, 0);
+	while (m_bRun)
+	{
+		GENPACKET packet = {0};
+		SOCKADDR_IN addr = {0};
+		int nLen= sizeof(addr);
+		recvfrom(m_SvrSocket, (char*)&packet, sizeof(packet), 0, (SOCKADDR*)&addr, &nLen);
+		std::string strIP = inet_ntoa(addr.sin_addr);
 
-	SOCKADDR_IN addr;
-	addr.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+		std::string strBody = packet.m_szData;
+		rapidjson::Document document(&m_parseAllocator);
+		if (document.Parse<0>(strBody.c_str()).HasParseError())
+		{
+			printf("解析json串失败！ json串：%s\n", strBody);
+			//释放解析器
+			m_parseAllocator.Clear();
+			((rapidjson::MemoryPoolAllocator<>::ChunkHeader*)m_parseBuffer)->size = 0;
+			continue;;
+		}
+		else
+		{
+			processSvrData(document, strIP);
+		}
+	}
+}
+
+bool CUDPRecvThread::InitServer()
+{
+	m_SvrSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	SOCKADDR_IN addr = {0};
 	addr.sin_family = AF_INET;
-	addr.sin_port=htons(PORT_DUODUO);
-
-	int nRet = bind(sock, (SOCKADDR*)&addr, sizeof(SOCKADDR));
+	addr.sin_port = htons(PORT_DUODUO);
+	addr.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+	
+	int nRet = bind(m_SvrSocket, (SOCKADDR*)&addr, sizeof(addr));
 	if(nRet == -1)
 	{
 		printf("Bind sock failed!\n");
@@ -93,56 +126,19 @@ void CUDPRecvThread::_StartUDPRecv()
 		SNotifyCenter::getSingletonPtr()->FireEventAsync(pEvt);
 		pEvt->Release();
 
-		return;
+		return false;
 	}
-
-	fd_set fd;
-	FD_ZERO(&fd);
-	FD_SET(sock, &fd);
-
-	char szDataBuffer[2048];
-	int nRecvSize;
-
-	while (m_bRun)
-	{
-		fd_set fdOld = fd;
-		int nResult = select(sock + 1, &fdOld, NULL, NULL, NULL);
-		for (int i = 0; i < fd.fd_count; i++)
-		{
-			if (fd.fd_array[i] == sock)
-			{
-				memset(szDataBuffer, 0, 2048);
-				nRecvSize = recv(fd.fd_array[i], szDataBuffer, 2048, 0);
-				if (nRecvSize > 0)
-				{
-					std::string strBody = szDataBuffer;
-					rapidjson::Document document(&m_parseAllocator);
-					if (document.Parse<0>(strBody.c_str()).HasParseError())
-					{
-						printf("解析json串失败！ json串：%s\n", strBody);
-						//释放解析器
-						m_parseAllocator.Clear();
-						((rapidjson::MemoryPoolAllocator<>::ChunkHeader*)m_parseBuffer)->size = 0;
-					}
-					else
-					{
-						if (document.IsObject())	//解析object
-							processSvrData(document);
-					}
-				}
-			}
-		}
-	}
+	return true;
 }
 
-void CUDPRecvThread::processSvrData(const rapidjson::Value& data)
+void CUDPRecvThread::processSvrData(const rapidjson::Value& data, std::string strIP/* = ""*/)
 {
 	assert(data.HasMember("cmd"));
 	std::string strCmd = data["cmd"].GetString();
 	if ("find_device" == strCmd)//网段内其他设备发送的查找设备的广播消息
-		ProcessFindDevice(data);
+		ProcessFindDevice(data, strIP);
 	else if ("broadcast_response" == strCmd)//广播响应
-		ProcessBroadcastResponse(data);
+		ProcessBroadcastResponse(data, strIP);
 	else if ("send_text" == strCmd)//接收到其他设备发送的文本消息
 		ProcessSendText(data);
 	else if ("send_image" == strCmd)//接收到其他设备发送的图片消息
@@ -155,12 +151,27 @@ void CUDPRecvThread::processSvrData(const rapidjson::Value& data)
 		ProcessSendVideo(data);
 }
 
-void CUDPRecvThread::ProcessFindDevice(const rapidjson::Value& data)
+void CUDPRecvThread::ProcessFindDevice(const rapidjson::Value& data, std::string strIP/* = ""*/)
 {
-	//
+	assert(data.IsObject());
+	assert(data.HasMember("name"));
+	assert(data.HasMember("port"));
+	assert(data.HasMember("client_id"));
+
+	std::string strName = data["name"].GetString();
+	std::string strClientID = data["client_id"].GetString();
+	int nPort = data["port"].GetInt();
+
+	EventFindDevice* pEvt = new EventFindDevice(NULL);
+	pEvt->m_strIP = strIP;
+	pEvt->m_strName = strName;
+	pEvt->m_strClientID = strClientID;
+	pEvt->m_nPort = nPort;
+	SNotifyCenter::getSingletonPtr()->FireEventAsync(pEvt);
+	pEvt->Release();
 }
 
-void CUDPRecvThread::ProcessBroadcastResponse(const rapidjson::Value& data)
+void CUDPRecvThread::ProcessBroadcastResponse(const rapidjson::Value& data,  std::string strIP/* = ""*/)
 {
 	//
 }

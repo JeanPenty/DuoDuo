@@ -21,14 +21,14 @@ SEVENT_END()
 SEVENT_BEGIN(EventFindDevice, EVT_FINDDEVICE)
 std::string m_strName;
 std::string m_strIP;
-std::string m_strPort;
+int m_nPort;
 std::string m_strClientID;
 SEVENT_END()
 
 SEVENT_BEGIN(EventBroadcastRequest, EVT_BROADCAST_RESPONSE)
 std::string m_strName;
 std::string m_strIP;
-std::string m_strPort;
+int m_nPort;
 std::string m_strClientID;
 SEVENT_END()
 

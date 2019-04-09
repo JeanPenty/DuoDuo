@@ -2,6 +2,8 @@
 
 #include <core/SSingleton.h>
 
+#include "public.h"
+
 #include "EventsDefine.h"
 
 class CDataCenter : public SObject
@@ -54,5 +56,9 @@ private:
 	}
 
 public:
-	DWORD*	m_pdwLocalIP;
+	std::string GenerateUUID();
+public:
+	CLIENT_INFO	m_LocalInfo;
+
+	ClientInfoMap	m_mapClients;
 };

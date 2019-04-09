@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="DuoDuoIM"
 	ProjectGUID="{12EB77C2-9B0A-4BA0-A9D1-F6B4E6D9280B}"
+	RootNamespace="DuoDuoIM"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -236,6 +237,10 @@
 			</File>
 			<File
 				RelativePath=".\MainDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\public.h"
 				>
 			</File>
 			<File

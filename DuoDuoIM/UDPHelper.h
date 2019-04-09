@@ -9,6 +9,21 @@
 
 typedef rapidjson::GenericStringBuffer<rapidjson::UTF8<>, rapidjson::MemoryPoolAllocator<> > MPAStringBuffer;
 
+//header定义
+typedef struct _tagHeader
+{
+	int m_nHeadLen;
+	DWORD m_nProtocolVersion;
+	int m_nBodyLen;
+}HEADER, *LPHEADER;
+
+//标准数据包定义
+typedef struct _tagGenPacket
+{
+	HEADER	m_header;
+	char	m_szData[2048];
+}GENPACKET, *LPGENPACKET;
+
 class CUDPSendThread
 {
 public:
@@ -25,9 +40,9 @@ public:
 
 protected:
 	void _SendBroadcast(const std::string& strBroadcastData);
-
 private:
-	CAutoRefPtr<ITaskLoop> m_pTaskLoop;
+	CAutoRefPtr<ITaskLoop>	m_pTaskLoop;
+	SOCKET					m_sockClient; //客户端SOCKET句柄
 };
 
 class CUDPSender : public SSingleton<CUDPSender>
@@ -62,7 +77,6 @@ public:
 	~CUDPRecvThread();
 
 	bool cancelTask(long taskId){
-		m_bRun = false;
 		return m_pTaskLoop->cancelTask(taskId);
 	}
 
@@ -73,10 +87,11 @@ public:
 protected:
 	void _StartUDPRecv();
 	
+	bool InitServer();
 private:
-	void processSvrData(const rapidjson::Value& data);
-	void ProcessFindDevice(const rapidjson::Value& data);
-	void ProcessBroadcastResponse(const rapidjson::Value& data);
+	void processSvrData(const rapidjson::Value& data, std::string strIP = "");
+	void ProcessFindDevice(const rapidjson::Value& data, std::string strIP = "");
+	void ProcessBroadcastResponse(const rapidjson::Value& data, std::string strIP = "");
 	void ProcessSendText(const rapidjson::Value& data);
 	void ProcessSendImage(const rapidjson::Value& data);
 	void ProcessSendFile(const rapidjson::Value& data);
@@ -86,6 +101,8 @@ private:
 	CAutoRefPtr<ITaskLoop> m_pTaskLoop;
 
 	bool	m_bRun;
+
+	SOCKET	m_SvrSocket; // 服务器端SOCKET句柄
 
 	//json解析
 #define PARSEBUFFER_SIZE 8192 //8k

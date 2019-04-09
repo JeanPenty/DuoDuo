@@ -62,7 +62,7 @@ void CDataCenter::OnFindDevice(EventArgs* e)
 			CLIENT_INFO(pEvt->m_strName, pEvt->m_strIP, pEvt->m_strClientID, pEvt->m_nPort)));
 
 		pEvt->bubbleUp = true;
-		//ReFireEventSync(pEvt);
+		ReFireEventSync(pEvt);
 	}
 }
 

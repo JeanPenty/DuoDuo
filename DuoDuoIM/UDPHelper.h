@@ -118,9 +118,9 @@ protected:
 	
 	bool InitServer();
 private:
-	void processSvrData(const rapidjson::Value& data, std::string strIP = "");
-	void ProcessFindDevice(const rapidjson::Value& data, std::string strIP = "");
-	void ProcessBroadcastResponse(const rapidjson::Value& data, std::string strIP = "");
+	void processSvrData(const rapidjson::Value& data, std::string strIP = "", int nPort = -1);
+	void ProcessFindDevice(const rapidjson::Value& data, std::string strIP = "", int nPort = -1);
+	void ProcessBroadcastResponse(const rapidjson::Value& data, std::string strIP = "", int nPort = -1);
 	void ProcessSendText(const rapidjson::Value& data);
 	void ProcessSendImage(const rapidjson::Value& data);
 	void ProcessSendFile(const rapidjson::Value& data);

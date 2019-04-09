@@ -96,7 +96,7 @@ void CUDPSendThread::_SendBroadcastRequest(const std::string& strRemoteIP, const
 
 	sockaddr_in addr = {0};
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(PORT_DUODUO);
+	addr.sin_port = htons(nPort);
 	addr.sin_addr.S_un.S_addr = inet_addr(strRemoteIP.c_str());
 
 	sendto(sock, (char*)&packet, sizeof(packet), 0, (sockaddr*)&addr, sizeof(sockaddr));
@@ -393,7 +393,7 @@ CUDPRecvThread::CUDPRecvThread(SComMgr &comMgr, std::string strName)
 
 	m_bRun = true;
 
-	InitServer();
+	//InitServer();
 }
 
 CUDPRecvThread::~CUDPRecvThread()
@@ -403,27 +403,34 @@ CUDPRecvThread::~CUDPRecvThread()
 
 void CUDPRecvThread::_StartUDPRecv()
 {
-	while (m_bRun)
+	if (InitServer())
 	{
-		GENPACKET packet = {0};
-		SOCKADDR_IN addr = {0};
-		int nLen = sizeof(addr);
-		recvfrom(m_SvrSocket, (char*)&packet, sizeof(packet), 0, (SOCKADDR*)&addr, &nLen);
-		std::string strIP = inet_ntoa(addr.sin_addr);
+		while (m_bRun)
+		{
+			GENPACKET packet = {0};
+			sockaddr_in addr = {0};
+			int nLen = sizeof(addr);
+			recvfrom(m_SvrSocket, (char*)&packet, sizeof(packet), 0, (sockaddr*)&addr, &nLen);
+			std::string strIP = inet_ntoa(addr.sin_addr);
+			int nPort = addr.sin_port;
 
-		std::string strBody = packet.m_szData;
-		rapidjson::Document document(&m_parseAllocator);
-		if (document.Parse<0>(strBody.c_str()).HasParseError())
-		{
-			printf("解析json串失败！ json串：%s\n", strBody);
-			//释放解析器
-			m_parseAllocator.Clear();
-			((rapidjson::MemoryPoolAllocator<>::ChunkHeader*)m_parseBuffer)->size = 0;
-			continue;
-		}
-		else
-		{
-			processSvrData(document, strIP);
+			std::string strBody = packet.m_szData;
+			if (!strBody.empty())
+			{
+				rapidjson::Document document(&m_parseAllocator);
+				if (document.Parse<0>(strBody.c_str()).HasParseError())
+				{
+					printf("解析json串失败！ json串：%s\n", strBody);
+					//释放解析器
+					m_parseAllocator.Clear();
+					((rapidjson::MemoryPoolAllocator<>::ChunkHeader*)m_parseBuffer)->size = 0;
+					continue;
+				}
+				else
+				{
+					processSvrData(document, strIP, nPort);
+				}
+			}
 		}
 	}
 }
@@ -451,14 +458,14 @@ bool CUDPRecvThread::InitServer()
 	return true;
 }
 
-void CUDPRecvThread::processSvrData(const rapidjson::Value& data, std::string strIP/* = ""*/)
+void CUDPRecvThread::processSvrData(const rapidjson::Value& data, std::string strIP/* = ""*/, int nPort/* = -1*/)
 {
 	assert(data.HasMember("cmd"));
 	std::string strCmd = data["cmd"].GetString();
 	if ("find_device" == strCmd)//网段内其他设备发送的查找设备的广播消息
-		ProcessFindDevice(data, strIP);
+		ProcessFindDevice(data, strIP, nPort);
 	else if ("broadcast_response" == strCmd)//广播响应
-		ProcessBroadcastResponse(data, strIP);
+		ProcessBroadcastResponse(data, strIP, nPort);
 	else if ("send_text" == strCmd)//接收到其他设备发送的文本消息
 		ProcessSendText(data);
 	else if ("send_image" == strCmd)//接收到其他设备发送的图片消息
@@ -471,7 +478,7 @@ void CUDPRecvThread::processSvrData(const rapidjson::Value& data, std::string st
 		ProcessSendVideo(data);
 }
 
-void CUDPRecvThread::ProcessFindDevice(const rapidjson::Value& data, std::string strIP/* = ""*/)
+void CUDPRecvThread::ProcessFindDevice(const rapidjson::Value& data, std::string strIP/* = ""*/, int nPort/* = -1*/)
 {
 	assert(data.IsObject());
 	assert(data.HasMember("name"));
@@ -480,7 +487,7 @@ void CUDPRecvThread::ProcessFindDevice(const rapidjson::Value& data, std::string
 
 	std::string strName = data["name"].GetString();
 	std::string strClientID = data["client_id"].GetString();
-	int nPort = data["port"].GetInt();
+	//int nPort = data["port"].GetInt();
 
 	EventFindDevice* pEvt = new EventFindDevice(NULL);
 	pEvt->m_strIP = strIP;
@@ -491,7 +498,7 @@ void CUDPRecvThread::ProcessFindDevice(const rapidjson::Value& data, std::string
 	pEvt->Release();
 }
 
-void CUDPRecvThread::ProcessBroadcastResponse(const rapidjson::Value& data,  std::string strIP/* = ""*/)
+void CUDPRecvThread::ProcessBroadcastResponse(const rapidjson::Value& data,  std::string strIP/* = ""*/, int nPort/* = -1*/)
 {
 	assert(data.IsObject());
 	assert(data.HasMember("name"));
@@ -500,7 +507,7 @@ void CUDPRecvThread::ProcessBroadcastResponse(const rapidjson::Value& data,  std
 
 	std::string strName = data["name"].GetString();
 	std::string strClientID = data["client_id"].GetString();
-	int nPort = data["port"].GetInt();
+	//int nPort = data["port"].GetInt();
 
 	EventBroadcastRequest* pEvt = new EventBroadcastRequest(NULL);
 	pEvt->m_nPort = nPort;

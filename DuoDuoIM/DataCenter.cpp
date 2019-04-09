@@ -46,8 +46,6 @@ void CDataCenter::OnBindBroadcastPortFailed(EventArgs* e)
 	EventBindPortFailed* pEvt = sobj_cast<EventBindPortFailed>(e);
 	if (pEvt)
 	{
-		//提示绑定端口号失败！
-		//退出进程
 		pEvt->bubbleUp = true;
 		ReFireEventSync(pEvt);
 	}
@@ -94,7 +92,9 @@ void CDataCenter::OnSendText(EventArgs* e)
 	EventSendText* pEvt = sobj_cast<EventSendText>(e);
 	if (pEvt)
 	{
-		//
+		//将消息存入内存中的最近会话map中    或者该操作后续处理
+		pEvt->bubbleUp = true;
+		ReFireEventSync(pEvt);
 	}
 }
 
@@ -103,6 +103,8 @@ void CDataCenter::OnSendImage(EventArgs* e)
 	EventSendImage* pEvt = sobj_cast<EventSendImage>(e);
 	if (pEvt)
 	{
+		pEvt->bubbleUp = true;
+		ReFireEventSync(pEvt);
 	}
 }
 
@@ -111,6 +113,8 @@ void CDataCenter::OnSendFile(EventArgs* e)
 	EventSendFile* pEvt = sobj_cast<EventSendFile>(e);
 	if (pEvt)
 	{
+		pEvt->bubbleUp = true;
+		ReFireEventSync(pEvt);
 	}
 }
 
@@ -119,6 +123,8 @@ void CDataCenter::OnSendAudio(EventArgs* e)
 	EventSendAudio* pEvt = sobj_cast<EventSendAudio>(e);
 	if (pEvt)
 	{
+		pEvt->bubbleUp = true;
+		ReFireEventSync(pEvt);
 	}
 }
 
@@ -127,6 +133,8 @@ void CDataCenter::OnSendVideo(EventArgs* e)
 	EventSendVideo* pEvt = sobj_cast<EventSendVideo>(e);
 	if (pEvt)
 	{
+		pEvt->bubbleUp = true;
+		ReFireEventSync(pEvt);
 	}
 }
 

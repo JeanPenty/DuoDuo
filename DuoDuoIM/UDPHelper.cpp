@@ -407,7 +407,7 @@ void CUDPRecvThread::_StartUDPRecv()
 	{
 		GENPACKET packet = {0};
 		SOCKADDR_IN addr = {0};
-		int nLen= sizeof(addr);
+		int nLen = sizeof(addr);
 		recvfrom(m_SvrSocket, (char*)&packet, sizeof(packet), 0, (SOCKADDR*)&addr, &nLen);
 		std::string strIP = inet_ntoa(addr.sin_addr);
 
@@ -508,6 +508,7 @@ void CUDPRecvThread::ProcessBroadcastResponse(const rapidjson::Value& data,  std
 	pEvt->m_strClientID = strClientID;
 	pEvt->m_strIP = strIP;
 	SNotifyCenter::getSingletonPtr()->FireEventAsync(pEvt);
+	pEvt->Release();
 }
 
 void CUDPRecvThread::ProcessSendText(const rapidjson::Value& data)
@@ -528,26 +529,135 @@ void CUDPRecvThread::ProcessSendText(const rapidjson::Value& data)
 	std::string strMsgID = data["msgid"].GetString();
 
 	//fire event
+	EventSendText* pEvt = new EventSendText(NULL);
+	pEvt->m_strFrom = strFrom;
+	pEvt->m_strTo = strTo;
+	pEvt->m_strType = strType;
+	pEvt->m_strContent = strContent;
+	pEvt->m_strTimestamp = strTime;
+	pEvt->m_strMsgID = strMsgID;
+	SNotifyCenter::getSingletonPtr()->FireEventAsync(pEvt);
+	pEvt->Release();
 }
 
 void CUDPRecvThread::ProcessSendImage(const rapidjson::Value& data)
 {
 	//接收到图片消息
+	assert(data.IsObject());
+	assert(data.HasMember("from"));
+	assert(data.HasMember("to"));
+	assert(data.HasMember("type"));
+	assert(data.HasMember("content"));
+	assert(data.HasMember("time"));
+	assert(data.HasMember("msgid"));
+
+	std::string strFrom = data["from"].GetString();
+	std::string strTo = data["to"].GetString();
+	std::string strType = data["type"].GetString();
+	std::string strContent = data["content"].GetString();
+	std::string strTime = data["time"].GetString();
+	std::string strMsgID = data["msgid"].GetString();
+
+	//fire event
+	EventSendImage* pEvt = new EventSendImage(NULL);
+	pEvt->m_strFrom = strFrom;
+	pEvt->m_strTo = strTo;
+	pEvt->m_strType = strType;
+	pEvt->m_strContent = strContent;
+	pEvt->m_strTimestamp = strTime;
+	pEvt->m_strMsgID = strMsgID;
+	SNotifyCenter::getSingletonPtr()->FireEventAsync(pEvt);
+	pEvt->Release();
 }
 
 void CUDPRecvThread::ProcessSendFile(const rapidjson::Value& data)
 {
 	//接收到文件消息
+	assert(data.IsObject());
+	assert(data.HasMember("from"));
+	assert(data.HasMember("to"));
+	assert(data.HasMember("type"));
+	assert(data.HasMember("content"));
+	assert(data.HasMember("time"));
+	assert(data.HasMember("msgid"));
+
+	std::string strFrom = data["from"].GetString();
+	std::string strTo = data["to"].GetString();
+	std::string strType = data["type"].GetString();
+	std::string strContent = data["content"].GetString();
+	std::string strTime = data["time"].GetString();
+	std::string strMsgID = data["msgid"].GetString();
+
+	//fire event
+	EventSendFile* pEvt = new EventSendFile(NULL);
+	pEvt->m_strFrom = strFrom;
+	pEvt->m_strTo = strTo;
+	pEvt->m_strType = strType;
+	pEvt->m_strContent = strContent;
+	pEvt->m_strTimestamp = strTime;
+	pEvt->m_strMsgID = strMsgID;
+	SNotifyCenter::getSingletonPtr()->FireEventAsync(pEvt);
+	pEvt->Release();
 }
 
 void CUDPRecvThread::ProcessSendAudio(const rapidjson::Value& data)
 {
 	//接收到短语音消息
+	assert(data.IsObject());
+	assert(data.HasMember("from"));
+	assert(data.HasMember("to"));
+	assert(data.HasMember("type"));
+	assert(data.HasMember("content"));
+	assert(data.HasMember("time"));
+	assert(data.HasMember("msgid"));
+
+	std::string strFrom = data["from"].GetString();
+	std::string strTo = data["to"].GetString();
+	std::string strType = data["type"].GetString();
+	std::string strContent = data["content"].GetString();
+	std::string strTime = data["time"].GetString();
+	std::string strMsgID = data["msgid"].GetString();
+
+	//fire event
+	EventSendAudio* pEvt = new EventSendAudio(NULL);
+	pEvt->m_strFrom = strFrom;
+	pEvt->m_strTo = strTo;
+	pEvt->m_strType = strType;
+	pEvt->m_strContent = strContent;
+	pEvt->m_strTimestamp = strTime;
+	pEvt->m_strMsgID = strMsgID;
+	SNotifyCenter::getSingletonPtr()->FireEventAsync(pEvt);
+	pEvt->Release();
 }
 
 void CUDPRecvThread::ProcessSendVideo(const rapidjson::Value& data)
 {
 	//接收到短视频消息
+	assert(data.IsObject());
+	assert(data.HasMember("from"));
+	assert(data.HasMember("to"));
+	assert(data.HasMember("type"));
+	assert(data.HasMember("content"));
+	assert(data.HasMember("time"));
+	assert(data.HasMember("msgid"));
+
+	std::string strFrom = data["from"].GetString();
+	std::string strTo = data["to"].GetString();
+	std::string strType = data["type"].GetString();
+	std::string strContent = data["content"].GetString();
+	std::string strTime = data["time"].GetString();
+	std::string strMsgID = data["msgid"].GetString();
+
+	//fire event
+	EventSendVideo* pEvt = new EventSendVideo(NULL);
+	pEvt->m_strFrom = strFrom;
+	pEvt->m_strTo = strTo;
+	pEvt->m_strType = strType;
+	pEvt->m_strContent = strContent;
+	pEvt->m_strTimestamp = strTime;
+	pEvt->m_strMsgID = strMsgID;
+	SNotifyCenter::getSingletonPtr()->FireEventAsync(pEvt);
+	pEvt->Release();
 }
 ///////////////////////////
 

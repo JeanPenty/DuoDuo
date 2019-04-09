@@ -425,9 +425,6 @@ void CUDPRecvThread::_StartUDPRecv()
 		{
 			processSvrData(document, strIP);
 		}
-		m_parseAllocator.Clear();
-		((rapidjson::MemoryPoolAllocator<>::ChunkHeader*)m_parseBuffer)->size = 0;
-		continue;
 	}
 }
 

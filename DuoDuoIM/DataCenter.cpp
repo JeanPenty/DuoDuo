@@ -58,8 +58,13 @@ void CDataCenter::OnFindDevice(EventArgs* e)
 	EventFindDevice* pEvt = sobj_cast<EventFindDevice>(e);
 	if (pEvt)
 	{
-		m_mapClients.insert(std::make_pair(pEvt->m_strClientID, 
-			CLIENT_INFO(pEvt->m_strName, pEvt->m_strIP, pEvt->m_strClientID, pEvt->m_nPort)));
+		//去重处理
+		ClientInfoMap::iterator iter = m_mapClients.find(pEvt->m_strClientID);
+		if (iter == m_mapClients.end())
+		{
+			m_mapClients.insert(std::make_pair(pEvt->m_strClientID, 
+				CLIENT_INFO(pEvt->m_strName, pEvt->m_strIP, pEvt->m_strClientID, pEvt->m_nPort)));
+		}
 
 		pEvt->bubbleUp = true;
 		ReFireEventSync(pEvt);
@@ -71,7 +76,16 @@ void CDataCenter::OnBroadcastRequest(EventArgs* e)
 	EventBroadcastRequest* pEvt = sobj_cast<EventBroadcastRequest>(e);
 	if (pEvt)
 	{
-		//
+		//去重处理
+		ClientInfoMap::iterator iter = m_mapClients.find(pEvt->m_strClientID);
+		if (iter == m_mapClients.end())
+		{
+			m_mapClients.insert(std::make_pair(pEvt->m_strClientID, 
+				CLIENT_INFO(pEvt->m_strName, pEvt->m_strIP, pEvt->m_strClientID, pEvt->m_nPort)));
+		}
+
+		pEvt->bubbleUp = true;
+		ReFireEventSync(pEvt);
 	}
 }
 

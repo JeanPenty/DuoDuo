@@ -19,10 +19,37 @@ CUDPSendThread::~CUDPSendThread()
 	m_pTaskLoop->stop();
 }
 
-void CUDPSendThread::_SendBroadcast(const std::string& strBroadcastData)
+void CUDPSendThread::_SendBroadcast(const std::string& strName, const std::string& strClientID, int& nPort)
 {
+	MPAStringBuffer s;
+	rapidjson::Writer<MPAStringBuffer> writer(s);
+	//通过writer构造json串
+	writer.StartObject();
+	writer.String("cmd");
+	writer.String("find_device");
+
+	writer.String("name");				//计算机名
+	writer.String(strName.c_str());
+
+	writer.String("ip");				//ip
+	writer.String("");
+
+	writer.String("port");			//port
+	writer.Int(nPort);
+
+	writer.String("client_id");			//当前客户端ID
+	writer.String(strClientID.c_str());
+	writer.EndObject();
+	std::string strPacket = s.GetString();
+
+	GENPACKET packet = {0};
+	packet.m_header.m_nProtocolVersion = 1;
+	packet.m_header.m_nHeadLen = 12;
+	packet.m_header.m_nBodyLen = strPacket.length();
+	strcpy(packet.m_szData, strPacket.c_str());
+
 	SOCKET sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	SOCKADDR_IN addr;
+	sockaddr_in addr;
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(PORT_DUODUO);
 	//addr.sin_addr.S_un.S_addr = htonl(INADDR_BROADCAST);
@@ -31,15 +58,278 @@ void CUDPSendThread::_SendBroadcast(const std::string& strBroadcastData)
 	//设置该套接字为广播类型，
 	DWORD optval = 1;
 	setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (char*)&optval, sizeof(DWORD)); //设置套接字选项
+	sendto(sock, (char*)&packet, sizeof(packet), 0, (sockaddr*)&addr,sizeof(sockaddr));
+
+	closesocket(sock);
+}
+
+void CUDPSendThread::_SendBroadcastRequest(const std::string& strRemoteIP, const std::string& strName, const std::string& strClientID, int& nPort)
+{
+	MPAStringBuffer s;
+	rapidjson::Writer<MPAStringBuffer> writer(s);
+	//通过writer构造json串
+	writer.StartObject();
+	writer.String("cmd");
+	writer.String("broadcast_response");
+
+	writer.String("name");				//计算机名
+	writer.String(strName.c_str());
+
+	writer.String("ip");				//ip
+	writer.String("");
+
+	writer.String("port");			//port
+	writer.Int(nPort);
+
+	writer.String("client_id");			//当前客户端ID
+	writer.String(strClientID.c_str());
+	writer.EndObject();
+	std::string strPacket = s.GetString();
 
 	GENPACKET packet = {0};
 	packet.m_header.m_nProtocolVersion = 1;
 	packet.m_header.m_nHeadLen = 12;
-	packet.m_header.m_nBodyLen = strBroadcastData.length();
-	strcpy(packet.m_szData, strBroadcastData.c_str());
+	packet.m_header.m_nBodyLen = strPacket.length();
+	strcpy(packet.m_szData, strPacket.c_str());
 
-	sendto(sock, (char*)&packet, sizeof(packet), 0, (SOCKADDR*)&addr,sizeof(SOCKADDR));
+	SOCKET sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
+	sockaddr_in addr = {0};
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(PORT_DUODUO);
+	addr.sin_addr.S_un.S_addr = inet_addr(strRemoteIP.c_str());
+
+	sendto(sock, (char*)&packet, sizeof(packet), 0, (sockaddr*)&addr, sizeof(sockaddr));
+	closesocket(sock);
+}
+
+void CUDPSendThread::_SendText(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent)
+{
+	MPAStringBuffer s;
+	rapidjson::Writer<MPAStringBuffer> writer(s);
+	//通过writer构造json串
+	writer.StartObject();
+	writer.String("cmd");
+	writer.String("send_text");
+
+	writer.String("from");				
+	writer.String(strFrom.c_str());
+
+	writer.String("to");				
+	writer.String(strTo.c_str());
+
+	writer.String("type");				
+	writer.String("text");
+
+	writer.String("content");			
+	writer.String(strContent.c_str());
+
+	writer.String("time");			
+	writer.String(strTimestamp.c_str());
+
+	writer.String("msgid");			
+	writer.String(strMsgID.c_str());
+	writer.EndObject();
+	std::string strPacket = s.GetString();
+
+	GENPACKET packet = {0};
+	packet.m_header.m_nProtocolVersion = 1;
+	packet.m_header.m_nHeadLen = 12;
+	packet.m_header.m_nBodyLen = strPacket.length();
+	strcpy(packet.m_szData, strPacket.c_str());
+
+	SOCKET sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+	sockaddr_in addr = {0};
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(PORT_DUODUO);
+	addr.sin_addr.S_un.S_addr = inet_addr(strRemoteIP.c_str());
+
+	sendto(sock, (char*)&packet, sizeof(packet), 0, (sockaddr*)&addr, sizeof(sockaddr));
+	closesocket(sock);
+}
+
+void CUDPSendThread::_SendImage(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent)
+{
+	MPAStringBuffer s;
+	rapidjson::Writer<MPAStringBuffer> writer(s);
+	//通过writer构造json串
+	writer.StartObject();
+	writer.String("cmd");
+	writer.String("send_text");
+
+	writer.String("from");				
+	writer.String(strFrom.c_str());
+
+	writer.String("to");				
+	writer.String(strTo.c_str());
+
+	writer.String("type");				
+	writer.String("image");
+
+	writer.String("content");			
+	writer.String(strContent.c_str());
+
+	writer.String("time");			
+	writer.String(strTimestamp.c_str());
+
+	writer.String("msgid");			
+	writer.String(strMsgID.c_str());
+	writer.EndObject();
+	std::string strPacket = s.GetString();
+
+	GENPACKET packet = {0};
+	packet.m_header.m_nProtocolVersion = 1;
+	packet.m_header.m_nHeadLen = 12;
+	packet.m_header.m_nBodyLen = strPacket.length();
+	strcpy(packet.m_szData, strPacket.c_str());
+
+	SOCKET sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+	sockaddr_in addr = {0};
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(PORT_DUODUO);
+	addr.sin_addr.S_un.S_addr = inet_addr(strRemoteIP.c_str());
+
+	sendto(sock, (char*)&packet, sizeof(packet), 0, (sockaddr*)&addr, sizeof(sockaddr));
+	closesocket(sock);
+}
+
+void CUDPSendThread::_SendFile(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent)
+{
+	MPAStringBuffer s;
+	rapidjson::Writer<MPAStringBuffer> writer(s);
+	//通过writer构造json串
+	writer.StartObject();
+	writer.String("cmd");
+	writer.String("send_text");
+
+	writer.String("from");				
+	writer.String(strFrom.c_str());
+
+	writer.String("to");				
+	writer.String(strTo.c_str());
+
+	writer.String("type");				
+	writer.String("file");
+
+	writer.String("content");			
+	writer.String(strContent.c_str());
+
+	writer.String("time");			
+	writer.String(strTimestamp.c_str());
+
+	writer.String("msgid");			
+	writer.String(strMsgID.c_str());
+	writer.EndObject();
+	std::string strPacket = s.GetString();
+
+	GENPACKET packet = {0};
+	packet.m_header.m_nProtocolVersion = 1;
+	packet.m_header.m_nHeadLen = 12;
+	packet.m_header.m_nBodyLen = strPacket.length();
+	strcpy(packet.m_szData, strPacket.c_str());
+
+	SOCKET sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+	sockaddr_in addr = {0};
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(PORT_DUODUO);
+	addr.sin_addr.S_un.S_addr = inet_addr(strRemoteIP.c_str());
+
+	sendto(sock, (char*)&packet, sizeof(packet), 0, (sockaddr*)&addr, sizeof(sockaddr));
+	closesocket(sock);
+}
+
+void CUDPSendThread::_SendAudio(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent)
+{
+	MPAStringBuffer s;
+	rapidjson::Writer<MPAStringBuffer> writer(s);
+	//通过writer构造json串
+	writer.StartObject();
+	writer.String("cmd");
+	writer.String("send_text");
+
+	writer.String("from");				
+	writer.String(strFrom.c_str());
+
+	writer.String("to");				
+	writer.String(strTo.c_str());
+
+	writer.String("type");				
+	writer.String("audio");
+
+	writer.String("content");			
+	writer.String(strContent.c_str());
+
+	writer.String("time");			
+	writer.String(strTimestamp.c_str());
+
+	writer.String("msgid");			
+	writer.String(strMsgID.c_str());
+	writer.EndObject();
+	std::string strPacket = s.GetString();
+
+	GENPACKET packet = {0};
+	packet.m_header.m_nProtocolVersion = 1;
+	packet.m_header.m_nHeadLen = 12;
+	packet.m_header.m_nBodyLen = strPacket.length();
+	strcpy(packet.m_szData, strPacket.c_str());
+
+	SOCKET sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+	sockaddr_in addr = {0};
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(PORT_DUODUO);
+	addr.sin_addr.S_un.S_addr = inet_addr(strRemoteIP.c_str());
+
+	sendto(sock, (char*)&packet, sizeof(packet), 0, (sockaddr*)&addr, sizeof(sockaddr));
+	closesocket(sock);
+}
+
+void CUDPSendThread::_SendVideo(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent)
+{
+	MPAStringBuffer s;
+	rapidjson::Writer<MPAStringBuffer> writer(s);
+	//通过writer构造json串
+	writer.StartObject();
+	writer.String("cmd");
+	writer.String("send_text");
+
+	writer.String("from");				
+	writer.String(strFrom.c_str());
+
+	writer.String("to");				
+	writer.String(strTo.c_str());
+
+	writer.String("type");				
+	writer.String("video");
+
+	writer.String("content");			
+	writer.String(strContent.c_str());
+
+	writer.String("time");			
+	writer.String(strTimestamp.c_str());
+
+	writer.String("msgid");			
+	writer.String(strMsgID.c_str());
+	writer.EndObject();
+	std::string strPacket = s.GetString();
+
+	GENPACKET packet = {0};
+	packet.m_header.m_nProtocolVersion = 1;
+	packet.m_header.m_nHeadLen = 12;
+	packet.m_header.m_nBodyLen = strPacket.length();
+	strcpy(packet.m_szData, strPacket.c_str());
+
+	SOCKET sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+	sockaddr_in addr = {0};
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(PORT_DUODUO);
+	addr.sin_addr.S_un.S_addr = inet_addr(strRemoteIP.c_str());
+
+	sendto(sock, (char*)&packet, sizeof(packet), 0, (sockaddr*)&addr, sizeof(sockaddr));
 	closesocket(sock);
 }
 ////////////////////////////
@@ -59,9 +349,39 @@ bool CUDPSender::cancelTask(long taskID)
 	return m_pThread->cancelTask(taskID);
 }
 
-void CUDPSender::SendBroadcast(const std::string& strBroadcastData, int nPriority /* = 1 */)
+void CUDPSender::SendBroadcast(const std::string& strName, const std::string& strClientID, int& nPort, int nPriority /* = 1 */)
 {
-	m_pThread->SendBroadcast(strBroadcastData, nPriority);
+	m_pThread->SendBroadcast(strName, strClientID, nPort, nPriority);
+}
+
+void CUDPSender::SendBroadcastRequest(const std::string& strRemoteIP, const std::string& strName, const std::string& strClientID, int& nPort, int nPriority /* = 1 */)
+{
+	m_pThread->SendBroadcastRequest(strRemoteIP, strName, strClientID, nPort, nPriority);
+}
+
+void CUDPSender::SendText(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority /* = 1 */)
+{
+	m_pThread->SendText(strRemoteIP, strFrom, strTo, strTimestamp, strMsgID, strContent, nPriority);
+}
+
+void CUDPSender::SendImage(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority /* = 1 */)
+{
+	m_pThread->SendImage(strRemoteIP, strFrom, strTo, strTimestamp, strMsgID, strContent, nPriority);
+}
+
+void CUDPSender::SendFile(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority /* = 1 */)
+{
+	m_pThread->SendFile(strRemoteIP, strFrom, strTo, strTimestamp, strMsgID, strContent, nPriority);
+}
+
+void CUDPSender::SendAudio(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority /* = 1 */)
+{
+	m_pThread->SendAudio(strRemoteIP, strFrom, strTo, strTimestamp, strMsgID, strContent, nPriority);
+}
+
+void CUDPSender::SendVideo(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority /* = 1 */)
+{
+	m_pThread->SendVideo(strRemoteIP, strFrom, strTo, strTimestamp, strMsgID, strContent, nPriority);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,12 +419,15 @@ void CUDPRecvThread::_StartUDPRecv()
 			//释放解析器
 			m_parseAllocator.Clear();
 			((rapidjson::MemoryPoolAllocator<>::ChunkHeader*)m_parseBuffer)->size = 0;
-			continue;;
+			continue;
 		}
 		else
 		{
 			processSvrData(document, strIP);
 		}
+		m_parseAllocator.Clear();
+		((rapidjson::MemoryPoolAllocator<>::ChunkHeader*)m_parseBuffer)->size = 0;
+		continue;
 	}
 }
 
@@ -173,32 +496,61 @@ void CUDPRecvThread::ProcessFindDevice(const rapidjson::Value& data, std::string
 
 void CUDPRecvThread::ProcessBroadcastResponse(const rapidjson::Value& data,  std::string strIP/* = ""*/)
 {
-	//
+	assert(data.IsObject());
+	assert(data.HasMember("name"));
+	assert(data.HasMember("port"));
+	assert(data.HasMember("client_id"));
+
+	std::string strName = data["name"].GetString();
+	std::string strClientID = data["client_id"].GetString();
+	int nPort = data["port"].GetInt();
+
+	EventBroadcastRequest* pEvt = new EventBroadcastRequest(NULL);
+	pEvt->m_nPort = nPort;
+	pEvt->m_strName = strName;
+	pEvt->m_strClientID = strClientID;
+	pEvt->m_strIP = strIP;
+	SNotifyCenter::getSingletonPtr()->FireEventAsync(pEvt);
 }
 
 void CUDPRecvThread::ProcessSendText(const rapidjson::Value& data)
 {
-	//
+	assert(data.IsObject());
+	assert(data.HasMember("from"));
+	assert(data.HasMember("to"));
+	assert(data.HasMember("type"));
+	assert(data.HasMember("content"));
+	assert(data.HasMember("time"));
+	assert(data.HasMember("msgid"));
+
+	std::string strFrom = data["from"].GetString();
+	std::string strTo = data["to"].GetString();
+	std::string strType = data["type"].GetString();
+	std::string strContent = data["content"].GetString();
+	std::string strTime = data["time"].GetString();
+	std::string strMsgID = data["msgid"].GetString();
+
+	//fire event
 }
 
 void CUDPRecvThread::ProcessSendImage(const rapidjson::Value& data)
 {
-	//
+	//接收到图片消息
 }
 
 void CUDPRecvThread::ProcessSendFile(const rapidjson::Value& data)
 {
-	//
+	//接收到文件消息
 }
 
 void CUDPRecvThread::ProcessSendAudio(const rapidjson::Value& data)
 {
-	//
+	//接收到短语音消息
 }
 
 void CUDPRecvThread::ProcessSendVideo(const rapidjson::Value& data)
 {
-	//
+	//接收到短视频消息
 }
 ///////////////////////////
 

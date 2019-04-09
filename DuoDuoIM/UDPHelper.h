@@ -34,12 +34,42 @@ public:
 		return m_pTaskLoop->cancelTask(taskId);
 	}
 
-	long SendBroadcast(const std::string& strBroadcastData, int nPriority = 1){
-		return STaskHelper::post(m_pTaskLoop, this, &CUDPSendThread::_SendBroadcast, strBroadcastData, false, nPriority);
+	long SendBroadcast(const std::string& strName, const std::string& strClientID, int& nPort, int nPriority = 1){
+		return STaskHelper::post(m_pTaskLoop, this, &CUDPSendThread::_SendBroadcast, strName, strClientID, nPort, false, nPriority);
+	}
+
+	long SendBroadcastRequest(const std::string& strRemoteIP, const std::string& strName, const std::string& strClientID, int& nPort, int nPriority = 1){
+		return STaskHelper::post(m_pTaskLoop, this, &CUDPSendThread::_SendBroadcastRequest, strRemoteIP, strName, strClientID, nPort, false, nPriority);
+	}
+
+	long SendText(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1){
+		return STaskHelper::post(m_pTaskLoop, this, &CUDPSendThread::_SendText, strRemoteIP, strFrom, strTo, strTimestamp, strMsgID, strContent, false, nPriority);
+	}
+
+	long SendImage(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1){
+		return STaskHelper::post(m_pTaskLoop, this, &CUDPSendThread::_SendText, strRemoteIP, strFrom, strTo, strTimestamp, strMsgID, strContent, false, nPriority);
+	}
+
+	long SendFile(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1){
+		return STaskHelper::post(m_pTaskLoop, this, &CUDPSendThread::_SendText, strRemoteIP, strFrom, strTo, strTimestamp, strMsgID, strContent, false, nPriority);
+	}
+
+	long SendAudio(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1){
+		return STaskHelper::post(m_pTaskLoop, this, &CUDPSendThread::_SendText, strRemoteIP, strFrom, strTo, strTimestamp, strMsgID, strContent, false, nPriority);
+	}
+
+	long SendVideo(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1){
+		return STaskHelper::post(m_pTaskLoop, this, &CUDPSendThread::_SendText, strRemoteIP, strFrom, strTo, strTimestamp, strMsgID, strContent, false, nPriority);
 	}
 
 protected:
-	void _SendBroadcast(const std::string& strBroadcastData);
+	void _SendBroadcast(const std::string& strName, const std::string& strClientID, int& nPort);
+	void _SendBroadcastRequest(const std::string& strRemoteIP, const std::string& strName, const std::string& strClientID, int& nPort);
+	void _SendText(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent);
+	void _SendImage(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent);
+	void _SendFile(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent);
+	void _SendAudio(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent);
+	void _SendVideo(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent);
 private:
 	CAutoRefPtr<ITaskLoop>	m_pTaskLoop;
 	SOCKET					m_sockClient; //¿Í»§¶ËSOCKET¾ä±ú
@@ -54,14 +84,13 @@ public:
 	bool cancelTask(long taskID);
 
 public:
-	void SendBroadcast(const std::string& strBroadcastData, int nPriority = 1);
-	void SendText(const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1);
-	void SendImage(const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1);
-	void SendFile(const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1);
-	void SendVideo(const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1);
-	void SendAudio(const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1);
-	//void SendImage(const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1);
-	//void SendImage(const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1);
+	void SendBroadcast(const std::string& strName, const std::string& strClientID, int& nPort, int nPriority = 1);
+	void SendBroadcastRequest(const std::string& strRemoteIP, const std::string& strName, const std::string& strClientID, int& nPort, int nPriority = 1);
+	void SendText(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1);
+	void SendImage(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1);
+	void SendFile(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1);
+	void SendVideo(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1);
+	void SendAudio(const std::string& strRemoteIP, const std::string& strFrom, const std::string& strTo, const std::string& strTimestamp, const std::string& strMsgID, const std::string& strContent, int nPriority = 1);
 private:
 	CUDPSendThread*	m_pThread;
 	SComMgr				m_comMgr;

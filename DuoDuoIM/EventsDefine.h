@@ -12,6 +12,7 @@ enum {
 	EVT_SENDFILE,
 	EVT_SENDAUDIO,
 	EVT_SENDVIDEO,
+	EVT_SNAPSHOTFINISH,
 };
 
 
@@ -75,5 +76,10 @@ std::string m_strType;
 std::string m_strContent;
 std::string m_strTimestamp;
 std::string m_strMsgID;
+SEVENT_END()
+
+
+//截图相关事件
+SEVENT_BEGIN(EventSnapshotFinish, EVT_SNAPSHOTFINISH)
 SEVENT_END()
 #endif

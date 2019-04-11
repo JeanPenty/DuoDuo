@@ -31,6 +31,7 @@ private:
 	void OnSendAudio(EventArgs* e);
 	void OnSendVideo(EventArgs* e);
 
+	void OnSnapshotFinish(EventArgs* e);
 private:
 	EVENT_MAP_BEGIN()
 		EVENT_ID_HANDLER(0, EventBindPortFailed::EventID, OnBindBroadcastPortFailed)
@@ -41,6 +42,7 @@ private:
 		EVENT_ID_HANDLER(0, EventSendFile::EventID, OnSendFile)
 		EVENT_ID_HANDLER(0, EventSendAudio::EventID, OnSendAudio)
 		EVENT_ID_HANDLER(0, EventSendVideo::EventID, OnSendVideo)
+		EVENT_ID_HANDLER(0, EventSnapshotFinish::EventID, OnSnapshotFinish)
 	EVENT_MAP_BREAK()
 
 	template<class T>

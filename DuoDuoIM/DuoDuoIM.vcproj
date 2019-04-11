@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SOUIPATH)\config&quot;;&quot;$(SOUIPATH)\components&quot;;&quot;$(SOUIPATH)\SOUI\include&quot;;&quot;$(SOUIPATH)\utilities\include&quot;;.\"
+				AdditionalIncludeDirectories="&quot;$(SOUIPATH)\config&quot;;&quot;$(SOUIPATH)\components&quot;;&quot;$(SOUIPATH)\SOUI\include&quot;;&quot;$(SOUIPATH)\utilities\include&quot;;.\;.\Snapshot"
 				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;_DEBUG"
 				RuntimeLibrary="3"
 				TreatWChar_tAsBuiltInType="true"
@@ -119,7 +119,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(SOUIPATH)\config&quot;;&quot;$(SOUIPATH)\components&quot;;&quot;$(SOUIPATH)\SOUI\include&quot;;&quot;$(SOUIPATH)\utilities\include&quot;;.\;$(NOINHERIT)"
+				AdditionalIncludeDirectories="&quot;$(SOUIPATH)\config&quot;;&quot;$(SOUIPATH)\components&quot;;&quot;$(SOUIPATH)\SOUI\include&quot;;&quot;$(SOUIPATH)\utilities\include&quot;;.\;.\Snapshot;$(NOINHERIT)"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="true"
@@ -222,6 +222,10 @@
 				RelativePath=".\UDPHelper.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\utils.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -233,6 +237,10 @@
 			</File>
 			<File
 				RelativePath=".\EventsDefine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FileHelper.h"
 				>
 			</File>
 			<File
@@ -261,6 +269,10 @@
 			</File>
 			<File
 				RelativePath=".\UDPHelper.h"
+				>
+			</File>
+			<File
+				RelativePath=".\utils.h"
 				>
 			</File>
 		</Filter>
@@ -295,6 +307,18 @@
 			</File>
 			<File
 				RelativePath=".\uires\xml\menu_tray.xml"
+				>
+			</File>
+			<File
+				RelativePath=".\uires\xml\page_list_contact.xml"
+				>
+			</File>
+			<File
+				RelativePath=".\uires\xml\page_list_lasttalk.xml"
+				>
+			</File>
+			<File
+				RelativePath=".\uires\xml\page_list_search.xml"
 				>
 			</File>
 			<File
@@ -336,6 +360,270 @@
 						Outputs=".\res\soui_res.rc2;"
 					/>
 				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="extend.ctrls"
+			>
+			<File
+				RelativePath=".\extend.ctrls\ExtendCtrls.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\extend.ctrls\ExtendCtrls.h"
+				>
+			</File>
+			<File
+				RelativePath=".\extend.ctrls\SButtonEx.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\extend.ctrls\SButtonEx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\extend.ctrls\SImageView.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\extend.ctrls\SImageView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\extend.ctrls\SplitBar.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\extend.ctrls\SSplitBar.h"
+				>
+			</File>
+			<Filter
+				Name="gif"
+				>
+				<File
+					RelativePath=".\extend.ctrls\gif\SAniImgFrame.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\gif\SGifPlayer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\gif\SGifPlayer.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\gif\SSkinAPNG.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\gif\SSkinAPNG.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\gif\SSkinGif.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\gif\SSkinGif.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="imre"
+				>
+				<File
+					RelativePath=".\extend.ctrls\imre\ClipboardConverter.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\ClipboardConverter.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\dataobject.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\dataobject.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\HTMLParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\HTMLParser.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\HTTPDownloader.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\HTTPDownloader.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\ImgProvider.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\ImgProvider.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\IRichEditObjHost.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\RichEditObj.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\RichEditObj.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\RichEditObjEvents.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\RichEditObjFactory.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\RichEditObjFactory.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\RichEditOleBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\RichEditOleBase.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\RichEditOleCallback.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\RichEditOleCallback.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\RichEditOleCtrls.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\RichEditOleCtrls.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\RichEditUnitConverter.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\RichEditUnitConverter.h"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\SImRichedit.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\extend.ctrls\imre\SImRichEdit.h"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="extend.events"
+			>
+			<File
+				RelativePath=".\extend.events\ExtendEvents.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="extend.skins"
+			>
+			<File
+				RelativePath=".\extend.skins\ExtendSkins.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\extend.skins\ExtendSkins.h"
+				>
+			</File>
+			<File
+				RelativePath=".\extend.skins\SAntialiasSkin.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\extend.skins\SAntialiasSkin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\extend.skins\SVscrollbar.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Snapshot"
+			>
+			<File
+				RelativePath=".\Snapshot\CBitmap.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Snapshot\CEdit9527.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Snapshot\CEdit9527.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Snapshot\CGdiDc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Snapshot\CPixelateGrid.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Snapshot\CWindowEnumer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Snapshot\CWindowEnumer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Snapshot\IWordSizeAdapterCallback.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Snapshot\SnapshotDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Snapshot\SnapshotDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Snapshot\SSnapshotCtrl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Snapshot\SSnapshotCtrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Snapshot\WordSizeAdapter.h"
+				>
 			</File>
 		</Filter>
 		<Filter

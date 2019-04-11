@@ -35,6 +35,8 @@ CDataCenter::CDataCenter(void)
 	SNotifyCenter::getSingleton().addEvent(EVENTID(EventSendFile));
 	SNotifyCenter::getSingleton().addEvent(EVENTID(EventSendAudio));
 	SNotifyCenter::getSingleton().addEvent(EVENTID(EventSendVideo));
+
+	SNotifyCenter::getSingleton().addEvent(EVENTID(EventSnapshotFinish));
 }
 
 CDataCenter::~CDataCenter(void)
@@ -136,6 +138,11 @@ void CDataCenter::OnSendVideo(EventArgs* e)
 		pEvt->bubbleUp = true;
 		ReFireEventSync(pEvt);
 	}
+}
+
+void CDataCenter::OnSnapshotFinish(EventArgs* e)
+{
+	//
 }
 
 std::string CDataCenter::GenerateUUID()

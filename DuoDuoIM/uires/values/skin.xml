@@ -1,5 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <skin>
-  	<imglist name="skin_traymenu_icons"	src="img:traymenu_icons" states="9"/>
-	</skin>
+  <imglist name="skin_traymenu_icons"	src="img:traymenu_icons" states="9"/>
+  <scrollbar name="skin_scrollbar" src="PNG:PNG_SB" margin="3" hasgripper="0"/>
+  <vscrollbar name="skin_vscroll" src="PNG:PNG_VSCROLL" states="1" margin="3"/>
+  
+  <imgframe name="skin_shadow" src="PNG:PNG_SHADOW" />
+  <imglist name="skin_close" src="PNG:PNG_COMMON_CLOSE" states="4" />
+  <imglist name="skin_min" src="PNG:PNG_COMMON_MIN" states="4" />
+  <imglist name="skin_max" src="PNG:PNG_COMMON_MAX" states="4" />
+  <imglist name="skin_restore" src="PNG:PNG_COMMON_RESTORE" states="4" />
+  
+  <imgframe name="skin_deflogo_48" src="PNG:PNG_DEFAULELOGO_48" />
+  <imgframe name="skin_search" src="PNG:PNG_SEARCH" />
+  <imglist name="skin_search_cancel" src="PNG:PNG_SEARCHCANCEL" states="3" />
+  
+  <imgframe name="skin_lasttalk_null" src="PNG:PNG_LASTTALK_NULL" />
+  <imgframe name="skin_search_null" src="PNG:PNG_SEARCH_NULL" />
+  
+  <imgframe name="skin_male32" src="PNG:PNG_MALE32" />
+  <imgframe name="skin_male48" src="PNG:PNG_MALE48" />
+  <imgframe name="skin_female32" src="PNG:PNG_FEMALE32" />
+  <imgframe name="skin_female48" src="PNG:PNG_FEMALE48" />
+</skin>

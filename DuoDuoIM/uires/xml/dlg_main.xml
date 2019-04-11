@@ -1,19 +1,63 @@
-﻿<SOUI name="mainWindow" title="@string/title" bigIcon="ICON_LOGO:32" smallIcon="ICON_LOGO:16" width="600" height="400"  margin="5,5,5,5"  resizable="1" wndType="appMain"
-toolWindow="1"
-translucent="1" 
->
-  <root skin="_skin.sys.wnd.bkgnd" cache="1">
-    <caption pos="0,0,-0,30" show="1" font="adding:0">
-      <icon pos="10,8" src="ICON_LOGO:16"/>
-      <text pos="29,9">@string/title</text>
-      <imgbtn name="btn_close" skin="_skin.sys.btn.close"    pos="-45,0" tip="close" animate="1"/>
-      <imgbtn name="btn_max" skin="_skin.sys.btn.maximize"  pos="-83,0" animate="1" />
-      <imgbtn name="btn_restore" skin="_skin.sys.btn.restore"  pos="-83,0" show="0" animate="1" />
-      <imgbtn name="btn_min" skin="_skin.sys.btn.minimize" pos="-121,0" animate="1" />
+﻿<SOUI name="mainWindow"
+      title="@string/title"
+      bigIcon="ICON_LOGO:32"
+      smallIcon="ICON_LOGO:16"
+      width="910" height="570"
+      minsize="910,570"
+      margin="15,15,15,15"
+      resizable="1"
+      wndType="appMain"
+      appWnd="1"
+      sendWheel2Hover="1"
+      translucent="1">
+<root skin="skin_shadow" cache="1">
+  <caption pos="10,10,-10,-10" colorBkgnd="rgb(255,255,255)">
+    <imgbtn name="btn_close" skin="skin_close" pos="-50,0" tip="关闭" animate="1" cursor="hand"/>
+    <imgbtn name="btn_max" skin="skin_max" pos="-100,{0" animate="1" cursor="hand"/>
+    <imgbtn name="btn_restore" skin="skin_restore" pos="-100,{0" show="0" animate="1" cursor="hand"/>
+    <imgbtn name="btn_min" skin="skin_min" pos="-150,{0" animate="1" cursor="hand"/>
+
+    <caption pos="0,0,65,-0" colorBkgnd="rgb(220,220,220)" >
+      <img name="img_logo" pos="8,25" skin="skin_deflogo_48" />
     </caption>
-    <window pos="5,[2,-5,-5">
-      <text pos="|0,|0" offset="-0.5,-0.5">这是一个由SOUI向导生成的APP框架</text>
-    </window>
-<shellnotifyicon id="110" menu="SMENU:menu_tray" ico="ICON_LOGO:16" tip="110"/>
-  </root>
+    <caption pos="[0,0,265,-0" colorBkgnd="#F6F7F9" margin="0,0,1,0" colorBorder="#F6F7F9">
+      <edit name="search_edit"
+            pos="5,30,-5,60"
+            colorBkgnd="rgb(220,220,220)"
+            align="left"
+            valign="center"
+            inset="30,0,30,0"
+            notifyChange="1"
+            font="face:微软雅黑,size:12"
+            autoWordSel="0"
+            colorText="#000000"
+            cueColor="rgb(153,153,153)"
+            cueText="搜索" />
+      <imgbtn pos="[-20,{8" name="search_cancel" skin="skin_search_cancel" cursor="hand" />
+      <img pos="15,37" skin="skin_search" />
+      <tabctrl pos="0,70,-0,-0" name="left_tab" tabHeight="0" colorBkgnd="#F6F7F9">
+        <page title="lasttalk_null_page">
+          <caption pos="0,0,-0,-0" colorBkgnd="#F6F7F9">
+            <img pos="40,100" skin="skin_lasttalk_null" />
+          </caption>
+        </page>
+        <page title="lasttalk_page">
+          <include src="LAYOUT:XML_PAGE_LASTTALK" />
+        </page>
+        <page title="contact_page">
+          <include src="LAYOUT:XML_PAGE_CONTACT" />
+        </page>
+        <page title="search_result_page">
+          <include src="LAYOUT:XML_PAGE_SEARCHRESULT" />
+        </page>
+        <page title="search_null_page">
+          <caption pos="0,0,-0,-0" colorBkgnd="#F6F7F9">
+            <img pos="40,100" skin="skin_search_null" />
+          </caption>
+        </page>
+      </tabctrl>
+    </caption>
+  </caption>
+  <shellnotifyicon id="110" menu="SMENU:menu_tray" ico="ICON_LOGO:16" tip="哆哆"/>
+</root>
 </SOUI>

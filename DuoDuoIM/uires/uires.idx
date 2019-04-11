@@ -4,6 +4,11 @@
   </UIDEF>
   <LAYOUT>
     <file name="XML_MAINWND" path="xml\dlg_main.xml"/>
+    <file name="XML_DLG_SNAPSHOT" path="xml\Snapshot\dlg_snapshot.xml" />
+
+    <file name="XML_PAGE_LASTTALK" path="xml\page_list_lasttalk.xml" />
+    <file name="XML_PAGE_CONTACT" path="xml\page_list_contact.xml" />
+    <file name="XML_PAGE_SEARCHRESULT" path="xml\page_list_search.xml" />
   </LAYOUT>
   
   <values>
@@ -15,6 +20,29 @@
   <IMG>
     <file name="traymenu_icons" path="image\traymenu_icons.png"/>
   </IMG>
+  
+  <PNG>
+    <file name="PNG_SHADOW" path="image\common\shadow.png" />
+    <file name="IDB_PNG_SB" path="image\common\sb.png" />
+    <file name="PNG_VSCROLL" path="image\common\vscrollbar.png" />
+    
+    <file name="PNG_COMMON_CLOSE" path="image\common\comm_close.png" />
+    <file name="PNG_COMMON_MIN" path="image\common\comm_min.png" />
+    <file name="PNG_COMMON_MAX" path="image\common\comm_max.png" />
+    <file name="PNG_COMMON_RESTORE" path="image\common\comm_restore.png" />
+    
+    <file name="PNG_DEFAULELOGO_48" path="image\default_logo48.png" />
+    <file name="PNG_SEARCH" path="image\common\search.png" />
+    <file name="PNG_SEARCHCANCEL" path="image\common\btn_cancel.png" />
+    
+    <file name="PNG_LASTTALK_NULL" path="image\common\lasttalk_null.png" />
+    <file name="PNG_SEARCH_NULL" path="image\common\search_null.png" />
+    
+    <file name="PNG_MALE32" path="image\common\male_32.png" />
+    <file name="PNG_MALE48" path="image\common\male_48.png" />
+    <file name="PNG_FEMALE32" path="image\common\female_32.png" />
+    <file name="PNG_FEMALE48" path="image\common\female_48.png" />
+  </PNG>
   <ICON>
     <file name="ICON_LOGO"  path="image\soui.ico"/>
   </ICON>

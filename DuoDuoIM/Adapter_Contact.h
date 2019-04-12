@@ -22,7 +22,32 @@ public:
 		virtual void ContactItemRClick(int nType, const std::string& strID) = 0;
 	};
 public:
-	void AddContact(int nType, const std::string& strID){
+	bool IsItemExist(const std::string& strID)
+	{
+		HSTREEITEM hParent = GetFirstVisibleItem();
+		while (ITEM_NULL != hParent)
+		{
+			if (HasChildren(hParent))		//有子节点则遍历子节点
+			{
+				HSTREEITEM hFirstChild = GetFirstChildItem(hParent);
+				while (ITEM_NULL != hFirstChild)
+				{
+					ItemInfo& info = m_tree.GetItemRef(hFirstChild);
+					if (info.data.strID == strID)
+						return true;
+
+					hFirstChild = GetNextSiblingItem(hFirstChild);
+				}
+			}
+			hParent = GetNextSiblingItem(hParent);
+		}
+		return false;
+	}
+	void AddContact(int nType, const std::string& strID)
+	{
+		if (IsItemExist(strID))
+			return;
+
 		HSTREEITEM hParent = GetFirstVisibleItem();
 		while (ITEM_NULL != hParent)
 		{

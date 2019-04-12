@@ -1,5 +1,13 @@
 <?xml version="1.0"?>
 <include>
   <caption pos="0,0,-0,-0" colorBkgnd="#F6F7F9">
+    <listview name="lv_lasttalk" pos="0,0,-0,-0" headHeight="0" focuable="0" sbWid="8" sbSkin="skin_vscroll" colorBkgnd="#F6F7F9">
+      <template itemHeight="60" colorHover="rgb(220,220,220)" colorSelected="rgb(192,192,192)" trackMouseEvent="1">
+        <img name="item_face" pos="10,14,@32,@32" skin="skin_male32"/>
+        <text name="item_name" pos="[10,{0,-75,30" align="left" dotted="1" colorText="#333333" font="face:微软雅黑,size:14,adding:1" />
+        <text name="item_time" pos="[0,{0,-5,35" align="right" colorText="#7F7F7F" font="face:微软雅黑,size:12" />
+        <text name="item_content" pos="52,35,-30,50" align="left" dotted="1" colorText="#7F7F7F" font="face:微软雅黑,size:10" />
+      </template>
+    </listview>
   </caption>
 </include>

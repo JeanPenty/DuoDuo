@@ -7,6 +7,16 @@
 #include <string>
 using namespace std;
 
+typedef struct times
+{
+	int Year;
+	int Mon;
+	int Day;
+	int Hour;
+	int Min;
+	int Second;
+}Times;
+
 typedef struct _tagClientInfo
 {
 	std::string m_strName;
@@ -30,5 +40,16 @@ typedef struct _tagClientInfo
 	}
 }CLIENT_INFO;
 typedef std::map<std::string, CLIENT_INFO>	ClientInfoMap;
+
+typedef struct _tagMessageInfo
+{
+	std::string m_strFrom;
+	std::string m_strTo;
+	std::string m_strType;
+	std::string m_strContent;
+	std::string m_strTime;
+	std::string m_strID;
+}MESSAGE_INFO;
+typedef std::map<std::string, MESSAGE_INFO>	LasttalkMap;
 
 #endif

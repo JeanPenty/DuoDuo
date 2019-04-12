@@ -63,4 +63,5 @@ public:
 	CLIENT_INFO	m_LocalInfo;
 
 	ClientInfoMap	m_mapClients;
+	LasttalkMap		m_mapLasttalks;
 };

@@ -1,5 +1,5 @@
 ﻿<SOUI name="mainWindow"
-      title="@string/title"
+      title="哆哆通信"
       bigIcon="ICON_LOGO:32"
       smallIcon="ICON_LOGO:16"
       width="910" height="570"
@@ -18,7 +18,10 @@
     <imgbtn name="btn_min" skin="skin_min" pos="-150,{0" animate="1" cursor="hand"/>
 
     <caption pos="0,0,65,-0" colorBkgnd="rgb(220,220,220)" >
-      <img name="img_logo" pos="8,25" skin="skin_deflogo_48" />
+      <img name="main_face" pos="8,25" skin="skin_male48" />
+
+      <imgbtn name="btn_message" pos="16,[20" skin="skin_message" cursor="hand"/>
+      <imgbtn name="btn_contact" pos="16,[20" skin="skin_contact" cursor="hand"/>
     </caption>
     <caption pos="[0,0,265,-0" colorBkgnd="#F6F7F9" margin="0,0,1,0" colorBorder="#F6F7F9">
       <edit name="search_edit"
@@ -53,6 +56,16 @@
         <page title="search_null_page">
           <caption pos="0,0,-0,-0" colorBkgnd="#F6F7F9">
             <img pos="40,100" skin="skin_search_null" />
+          </caption>
+        </page>
+      </tabctrl>
+    </caption>
+    <caption pos="[0,30,-0,-0" colorBkgnd="rgb(255,255,255)">
+      <text name="cursel_name" pos="0,0,-100,30" align="left" valign="center">测试测试哆哆</text>
+      <tabctrl pos="0,[0,-0,-0" name="right_tab" tabHeight="0" colorBkgnd="rgb(255,255,255)">
+        <page title="select_null">
+          <caption pos="0,0,-0,-0" colorBkgnd="rgb(255,255,255)">
+            <img pos="|-64,|-164" skin="skin_deflogo_128" />
           </caption>
         </page>
       </tabctrl>

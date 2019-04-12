@@ -52,14 +52,13 @@ void CUDPSendThread::_SendBroadcast(const std::string& strName, const std::strin
 	sockaddr_in addr;
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(PORT_DUODUO);
-	addr.sin_addr.S_un.S_addr = htonl(INADDR_BROADCAST);
-	//addr.sin_addr.S_un.S_addr = inet_addr("255.255.255.255");
+	//addr.sin_addr.S_un.S_addr = htonl(INADDR_BROADCAST);
+	addr.sin_addr.S_un.S_addr = inet_addr("255.255.255.255");
 
 	//设置该套接字为广播类型，
 	DWORD optval = 1;
 	setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (char*)&optval, sizeof(DWORD)); //设置套接字选项
 	sendto(sock, (char*)&packet, sizeof(packet), 0, (sockaddr*)&addr,sizeof(sockaddr));
-
 	closesocket(sock);
 }
 
@@ -93,7 +92,7 @@ void CUDPSendThread::_SendBroadcastRequest(const std::string& strRemoteIP, const
 
 	sockaddr_in addr = {0};
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(nPort);
+	addr.sin_port = htons(PORT_DUODUO);
 	addr.sin_addr.S_un.S_addr = inet_addr(strRemoteIP.c_str());
 
 	sendto(sock, (char*)&packet, sizeof(packet), 0, (sockaddr*)&addr, sizeof(sockaddr));
